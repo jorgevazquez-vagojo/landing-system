@@ -16,6 +16,7 @@ import { Comparison } from './Comparison';
 import { Navigation } from './Navigation';
 import { Embed } from './Embed';
 import { Divider } from './Divider';
+import { MultiStepForm } from './MultiStepForm';
 import type { ComponentDefinition } from '@/types/component';
 
 export const componentMap: Record<string, React.ComponentType<Record<string, unknown>>> = {
@@ -37,6 +38,7 @@ export const componentMap: Record<string, React.ComponentType<Record<string, unk
   navigation: Navigation,
   embed: Embed,
   divider: Divider,
+  'multi-step-form': MultiStepForm as React.ComponentType<Record<string, unknown>>,
 };
 
 export const componentRegistry: ComponentDefinition[] = [
@@ -256,6 +258,41 @@ export const componentRegistry: ComponentDefinition[] = [
     variants: [{ id: 'line', name: 'Line' }, { id: 'space', name: 'Spacer' }, { id: 'wave', name: 'Wave' }],
     defaultProps: { style: 'line' },
     propsSchema: [{ name: 'style', label: 'Style', type: 'select', options: [{ label: 'Line', value: 'line' }, { label: 'Spacer', value: 'space' }, { label: 'Wave', value: 'wave' }] }],
+  },
+  {
+    type: 'multi-step-form',
+    name: 'Multi-Step Form',
+    icon: 'ClipboardList',
+    category: 'form',
+    variants: [{ id: 'default', name: 'Default' }, { id: 'card', name: 'Card Style' }],
+    defaultProps: {
+      formConfig: {
+        steps: [
+          {
+            id: 'step-1',
+            title: 'Contact Information',
+            description: 'Tell us about yourself',
+            fields: [
+              { id: 'f-name', name: 'name', label: 'Full Name', type: 'text', required: true },
+              { id: 'f-email', name: 'email', label: 'Email', type: 'email', required: true },
+            ],
+          },
+          {
+            id: 'step-2',
+            title: 'Your Needs',
+            description: 'Help us understand your requirements',
+            fields: [
+              { id: 'f-company', name: 'company', label: 'Company', type: 'text' },
+              { id: 'f-message', name: 'message', label: 'Message', type: 'textarea' },
+            ],
+          },
+        ],
+        settings: { submitText: 'Submit', successMessage: 'Thank you!', progressBar: true },
+      },
+    },
+    propsSchema: [
+      { name: 'formConfig', label: 'Form Configuration (JSON)', type: 'array' },
+    ],
   },
   {
     type: 'footer',

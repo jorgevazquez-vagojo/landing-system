@@ -8,6 +8,9 @@ import { ComponentPalette } from '@/components/editor/ComponentPalette';
 import { PropertiesPanel } from '@/components/editor/PropertiesPanel';
 import { TopToolbar } from '@/components/editor/TopToolbar';
 import { LayerPanel } from '@/components/editor/LayerPanel';
+import { AIPanel } from '@/components/editor/AIPanel';
+
+type RightPanel = 'properties' | 'ai';
 
 export default function EditorPage() {
   const params = useParams();
@@ -16,6 +19,7 @@ export default function EditorPage() {
   const { init, sections, settings, seoMeta, setIsSaving, isPreviewing } = useEditorStore();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [rightPanel, setRightPanel] = useState<RightPanel>('properties');
 
   useEffect(() => {
     async function loadLanding() {
@@ -101,7 +105,12 @@ export default function EditorPage() {
 
   return (
     <div className="flex h-screen flex-col">
-      <TopToolbar onSave={handleSave} onPublish={handlePublish} />
+      <TopToolbar
+        onSave={handleSave}
+        onPublish={handlePublish}
+        rightPanel={rightPanel}
+        onToggleRightPanel={setRightPanel}
+      />
       <div className="flex flex-1 overflow-hidden">
         {!isPreviewing && (
           <div className="flex flex-col">
@@ -112,7 +121,9 @@ export default function EditorPage() {
         <div className="flex-1">
           <Canvas />
         </div>
-        {!isPreviewing && <PropertiesPanel />}
+        {!isPreviewing && (
+          rightPanel === 'ai' ? <AIPanel /> : <PropertiesPanel />
+        )}
       </div>
     </div>
   );

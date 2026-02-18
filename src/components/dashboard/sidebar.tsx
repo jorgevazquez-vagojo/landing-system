@@ -9,7 +9,11 @@ const navigation = [
   { name: 'Landings', href: '/dashboard/landings', icon: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM14 2v6h6M16 13H8m8 4H8m2-8H8' },
   { name: 'Templates', href: '/dashboard/templates', icon: 'M3 3h18v18H3V3zm0 6h18M9 9v12' },
   { name: 'Leads', href: '/dashboard/leads', icon: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m7-10a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm6 4a4 4 0 0 0 0-8' },
+  { name: 'A/B Testing', href: '/dashboard/experiments', icon: 'M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M9 14l2 2 4-4M8 2h8v4H8z' },
+  { name: 'Popups', href: '/dashboard/popups', icon: 'M4 4h16v16H4V4zm4 8h8m-4-4v8' },
+  { name: 'Heatmaps', href: '/dashboard/heatmaps', icon: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z' },
   { name: 'Analytics', href: '/dashboard/analytics', icon: 'M18 20V10m-6 10V4M6 20v-6' },
+  { name: 'Accessibility', href: '/dashboard/accessibility', icon: 'M12 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 8c-4 0-6 2-6 4v2h12v-2c0-2-2-4-6-4z' },
   { name: 'Media', href: '/dashboard/media', icon: 'M3 3h18v18H3V3zm3.5 8.5 3-3L15 14l3-3M8.5 8.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z' },
   { name: 'Integrations', href: '/dashboard/integrations', icon: 'M12 22v-5m-3-3V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v9m-6 0h6a3 3 0 0 1-6 0z' },
   { name: 'SEO', href: '/dashboard/seo', icon: 'M11 3a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm10 18-4.35-4.35' },
@@ -49,7 +53,7 @@ export function Sidebar() {
         })}
       </nav>
       <div className="border-t border-border px-6 py-4">
-        <p className="text-xs text-muted-foreground">Landing System v1.0</p>
+        <p className="text-xs text-muted-foreground">Landing System v2.0</p>
       </div>
     </aside>
   );

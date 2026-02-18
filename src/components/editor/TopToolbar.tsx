@@ -3,12 +3,16 @@
 import Link from 'next/link';
 import { useEditorStore, type ViewMode } from '@/stores/editor-store';
 
+type RightPanel = 'properties' | 'ai';
+
 interface TopToolbarProps {
   onSave: () => void;
   onPublish: () => void;
+  rightPanel?: RightPanel;
+  onToggleRightPanel?: (panel: RightPanel) => void;
 }
 
-export function TopToolbar({ onSave, onPublish }: TopToolbarProps) {
+export function TopToolbar({ onSave, onPublish, rightPanel = 'properties', onToggleRightPanel }: TopToolbarProps) {
   const { landingName, isDirty, isSaving, isPreviewing, viewMode, setViewMode, setIsPreviewing } = useEditorStore();
   const { undo, redo, pastStates, futureStates } = useEditorStore.temporal.getState();
 
@@ -31,7 +35,7 @@ export function TopToolbar({ onSave, onPublish }: TopToolbarProps) {
         {isDirty && <span className="h-2 w-2 rounded-full bg-orange-400" title="Unsaved changes" />}
       </div>
 
-      {/* Center: View mode + preview */}
+      {/* Center: View mode + preview + panel toggle */}
       <div className="flex items-center gap-2">
         <div className="flex items-center rounded-lg border border-gray-200 p-0.5">
           {viewModes.map((vm) => (
@@ -54,6 +58,28 @@ export function TopToolbar({ onSave, onPublish }: TopToolbarProps) {
         >
           {isPreviewing ? 'Edit' : 'Preview'}
         </button>
+
+        <div className="mx-1 h-6 w-px bg-gray-200" />
+
+        {/* Right panel toggle */}
+        {onToggleRightPanel && !isPreviewing && (
+          <div className="flex items-center rounded-lg border border-gray-200 p-0.5">
+            <button
+              onClick={() => onToggleRightPanel('properties')}
+              className={`rounded-md px-2.5 py-1.5 text-xs font-medium ${rightPanel === 'properties' ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+              title="Properties"
+            >
+              Props
+            </button>
+            <button
+              onClick={() => onToggleRightPanel('ai')}
+              className={`rounded-md px-2.5 py-1.5 text-xs font-medium ${rightPanel === 'ai' ? 'bg-purple-50 text-purple-600' : 'text-gray-500 hover:text-gray-700'}`}
+              title="AI Copywriter"
+            >
+              AI
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Right: Undo/Redo, Save, Publish */}

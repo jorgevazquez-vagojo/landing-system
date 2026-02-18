@@ -31,6 +31,14 @@ model Company {
   media     Media[]
   integrations Integration[]
   auditLogs AuditLog[]
+  experiments Experiment[]
+  popups    Popup[]
+  visitorSessions VisitorSession[]
+  pageEvents PageEvent[]
+  formDefinitions FormDefinition[]
+  personalizationRules PersonalizationRule[]
+  accessibilityAudits AccessibilityAudit[]
+  aiSettings Json @default("{}")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -110,6 +118,11 @@ model Landing {
   templateId  String?
   template    Template?     @relation(fields: [templateId], references: [id])
   leads       Lead[]
+  experiments Experiment[]
+  popups      Popup[]
+  pageEvents  PageEvent[]
+  visitorSessions VisitorSession[]
+  accessibilityAudits AccessibilityAudit[]
   publishedAt DateTime?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -192,4 +205,239 @@ model AuditLog {
 
   @@index([companyId, createdAt])
   @@index([entity, entityId])
+}
+
+// ==========================================
+// A/B TESTING
+// ==========================================
+
+enum ExperimentStatus {
+  DRAFT
+  RUNNING
+  PAUSED
+  COMPLETED
+}
+
+model Experiment {
+  id          String           @id @default(cuid())
+  name        String
+  description String?
+  status      ExperimentStatus @default(DRAFT)
+  landingId   String
+  landing     Landing          @relation(fields: [landingId], references: [id], onDelete: Cascade)
+  companyId   String
+  company     Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  variants    ExperimentVariant[]
+  events      ExperimentEvent[]
+  startedAt   DateTime?
+  endedAt     DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([companyId])
+  @@index([landingId])
+}
+
+model ExperimentVariant {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String
+  weight       Int      @default(50)
+  sections     Json     @default("[]")
+  isControl    Boolean  @default(false)
+  experimentId String
+  experiment   Experiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
+  events       ExperimentEvent[]
+  createdAt    DateTime @default(now())
+
+  @@index([experimentId])
+}
+
+model ExperimentEvent {
+  id          String   @id @default(cuid())
+  type        String
+  visitorId   String
+  variantId   String
+  variant     ExperimentVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  experimentId String
+  experiment  Experiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
+  metadata    Json     @default("{}")
+  createdAt   DateTime @default(now())
+
+  @@index([experimentId, type])
+  @@index([variantId])
+  @@index([visitorId])
+}
+
+// ==========================================
+// POPUPS & STICKY BARS
+// ==========================================
+
+enum PopupType {
+  MODAL
+  SLIDE_IN
+  STICKY_BAR
+  FULLSCREEN
+}
+
+enum PopupStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+model Popup {
+  id        String      @id @default(cuid())
+  name      String
+  type      PopupType   @default(MODAL)
+  status    PopupStatus @default(DRAFT)
+  content   Json        @default("{}")
+  style     Json        @default("{}")
+  triggers  Json        @default("[]")
+  targeting Json        @default("{}")
+  landingId String?
+  landing   Landing?    @relation(fields: [landingId], references: [id], onDelete: Cascade)
+  companyId String
+  company   Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  events    PopupEvent[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([companyId])
+  @@index([landingId])
+}
+
+model PopupEvent {
+  id        String   @id @default(cuid())
+  type      String
+  visitorId String
+  popupId   String
+  popup     Popup    @relation(fields: [popupId], references: [id], onDelete: Cascade)
+  metadata  Json     @default("{}")
+  createdAt DateTime @default(now())
+
+  @@index([popupId, type])
+  @@index([visitorId])
+}
+
+// ==========================================
+// HEATMAPS & ANALYTICS
+// ==========================================
+
+model PageEvent {
+  id        String   @id @default(cuid())
+  type      String
+  landingId String
+  landing   Landing  @relation(fields: [landingId], references: [id], onDelete: Cascade)
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  sessionId String?
+  session   VisitorSession? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  visitorId String
+  data      Json     @default("{}")
+  createdAt DateTime @default(now())
+
+  @@index([landingId, type])
+  @@index([companyId, createdAt])
+  @@index([sessionId])
+}
+
+model VisitorSession {
+  id          String   @id @default(cuid())
+  visitorId   String
+  landingId   String
+  landing     Landing  @relation(fields: [landingId], references: [id], onDelete: Cascade)
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  device      String?
+  browser     String?
+  os          String?
+  country     String?
+  city        String?
+  referrer    String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  duration    Int      @default(0)
+  pageEvents  PageEvent[]
+  scrollDepth Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([landingId])
+  @@index([companyId, createdAt])
+  @@index([visitorId])
+}
+
+// ==========================================
+// MULTI-STEP FORMS
+// ==========================================
+
+model FormDefinition {
+  id          String   @id @default(cuid())
+  name        String
+  steps       Json     @default("[]")
+  settings    Json     @default("{}")
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  submissions FormSubmission[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([companyId])
+}
+
+model FormSubmission {
+  id           String   @id @default(cuid())
+  formId       String
+  form         FormDefinition @relation(fields: [formId], references: [id], onDelete: Cascade)
+  visitorId    String
+  data         Json     @default("{}")
+  completedSteps Int    @default(0)
+  isComplete   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([formId])
+  @@index([visitorId])
+}
+
+// ==========================================
+// PERSONALIZATION RULES
+// ==========================================
+
+model PersonalizationRule {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  conditions  Json     @default("[]")
+  actions     Json     @default("[]")
+  priority    Int      @default(0)
+  enabled     Boolean  @default(true)
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([companyId, enabled])
+}
+
+// ==========================================
+// ACCESSIBILITY AUDIT
+// ==========================================
+
+model AccessibilityAudit {
+  id        String   @id @default(cuid())
+  landingId String
+  landing   Landing  @relation(fields: [landingId], references: [id], onDelete: Cascade)
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  score     Int      @default(0)
+  issues    Json     @default("[]")
+  summary   Json     @default("{}")
+  createdAt DateTime @default(now())
+
+  @@index([landingId])
+  @@index([companyId])
 }
