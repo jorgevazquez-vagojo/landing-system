@@ -1,6 +1,7 @@
 import { SessionProvider } from 'next-auth/react';
 import { Sidebar } from '@/components/dashboard/sidebar';
 import { Header } from '@/components/dashboard/header';
+import { CommandPalette } from '@/components/dashboard/CommandPalette';
 
 export default function DashboardLayout({
   children,
@@ -20,6 +21,7 @@ export default function DashboardLayout({
           </main>
         </div>
       </div>
+      <CommandPalette />
     </SessionProvider>
   );
 }

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEditorStore, type ViewMode } from '@/stores/editor-store';
+import { CollaborationBar } from './CollaborationBar';
 
 type RightPanel = 'properties' | 'ai';
 
@@ -13,7 +14,7 @@ interface TopToolbarProps {
 }
 
 export function TopToolbar({ onSave, onPublish, rightPanel = 'properties', onToggleRightPanel }: TopToolbarProps) {
-  const { landingName, isDirty, isSaving, isPreviewing, viewMode, setViewMode, setIsPreviewing } = useEditorStore();
+  const { landingId, landingName, isDirty, isSaving, isPreviewing, viewMode, setViewMode, setIsPreviewing } = useEditorStore();
   const { undo, redo, pastStates, futureStates } = useEditorStore.temporal.getState();
 
   const viewModes: { mode: ViewMode; icon: string; label: string }[] = [
@@ -33,6 +34,7 @@ export function TopToolbar({ onSave, onPublish, rightPanel = 'properties', onTog
         </Link>
         <span className="font-semibold text-gray-900">{landingName}</span>
         {isDirty && <span className="h-2 w-2 rounded-full bg-orange-400" title="Unsaved changes" />}
+        {landingId && <CollaborationBar landingId={landingId} />}
       </div>
 
       {/* Center: View mode + preview + panel toggle */}

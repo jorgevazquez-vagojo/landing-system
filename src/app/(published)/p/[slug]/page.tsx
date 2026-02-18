@@ -59,6 +59,24 @@ export default async function PublishedLandingPage({ params }: Props) {
   const sections = (landing.sections || []) as Array<{ id: string; type: string; variant?: string; props: Record<string, unknown>; order: number }>;
   const meta = (landing.seoMeta || {}) as Record<string, unknown>;
 
+  // Load running A/B experiments for this landing
+  const experiments = await prisma.experiment.findMany({
+    where: { landingId: landing.id, status: 'RUNNING' },
+    include: { variants: true },
+  });
+
+  const experimentData = experiments.map((exp) => ({
+    id: exp.id,
+    variants: exp.variants.map((v) => ({
+      id: v.id,
+      slug: v.slug,
+      name: v.name,
+      weight: v.weight,
+      isControl: v.isControl,
+      sections: v.sections as unknown[],
+    })),
+  }));
+
   // Auto-generate structured data from sections
   const structuredData = generateStructuredData(
     {
@@ -103,7 +121,7 @@ export default async function PublishedLandingPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: llmContent }}
       />
 
-      <LandingRenderer sections={sections} landingId={landing.id} />
+      <LandingRenderer sections={sections} landingId={landing.id} experiments={experimentData} />
     </>
   );
 }

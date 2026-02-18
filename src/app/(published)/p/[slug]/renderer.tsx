@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { componentMap } from '@/components/landing';
 import { PopupRenderer } from '@/components/landing/PopupRenderer';
 import { getUrlParams, replaceSectionProps } from '@/lib/dynamic-text';
@@ -17,6 +17,25 @@ interface DTRDefaults {
   [key: string]: string;
 }
 
+interface ExperimentVariant {
+  id: string;
+  slug: string;
+  name: string;
+  weight: number;
+  isControl: boolean;
+  sections: unknown[];
+}
+
+interface ExperimentData {
+  id: string;
+  variants: ExperimentVariant[];
+}
+
+interface ActiveAssignment {
+  experimentId: string;
+  variantId: string;
+}
+
 function getVisitorId(): string {
   let id = document.cookie.match(/ls_visitor=([^;]+)/)?.[1];
   if (!id) {
@@ -26,6 +45,30 @@ function getVisitorId(): string {
   return id;
 }
 
+/** Get stored experiment assignments from cookie */
+function getStoredAssignments(): Record<string, string> {
+  const raw = document.cookie.match(/ls_ab=([^;]+)/)?.[1];
+  if (!raw) return {};
+  try { return JSON.parse(decodeURIComponent(raw)); } catch { return {}; }
+}
+
+/** Store experiment assignments in cookie */
+function storeAssignments(assignments: Record<string, string>) {
+  const value = encodeURIComponent(JSON.stringify(assignments));
+  document.cookie = `ls_ab=${value};path=/;max-age=${30 * 24 * 60 * 60};SameSite=Lax`;
+}
+
+/** Weighted random variant selection */
+function weightedRandom(variants: ExperimentVariant[]): ExperimentVariant {
+  const totalWeight = variants.reduce((sum, v) => sum + v.weight, 0);
+  let random = Math.random() * totalWeight;
+  for (const v of variants) {
+    random -= v.weight;
+    if (random <= 0) return v;
+  }
+  return variants[variants.length - 1];
+}
+
 function TrackingScript({ landingId }: { landingId: string }) {
   useEffect(() => {
     const visitorId = getVisitorId();
@@ -33,7 +76,6 @@ function TrackingScript({ landingId }: { landingId: string }) {
     let maxScrollDepth = 0;
     const eventBuffer: Array<{ type: string; data: Record<string, unknown> }> = [];
 
-    // Track page view
     eventBuffer.push({
       type: 'pageview',
       data: {
@@ -46,7 +88,6 @@ function TrackingScript({ landingId }: { landingId: string }) {
       },
     });
 
-    // Click tracking
     function handleClick(e: MouseEvent) {
       const target = e.target as HTMLElement;
       eventBuffer.push({
@@ -63,7 +104,6 @@ function TrackingScript({ landingId }: { landingId: string }) {
       if (eventBuffer.length >= 20) flush();
     }
 
-    // Scroll tracking
     function handleScroll() {
       const scrollTop = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -97,8 +137,6 @@ function TrackingScript({ landingId }: { landingId: string }) {
     document.addEventListener('click', handleClick);
     window.addEventListener('scroll', handleScroll, { passive: true });
     const interval = setInterval(flush, 5000);
-
-    // Initial flush
     flush();
 
     return () => {
@@ -112,33 +150,107 @@ function TrackingScript({ landingId }: { landingId: string }) {
   return null;
 }
 
+/** Track A/B experiment view event */
+function ExperimentTracker({ assignments }: { assignments: ActiveAssignment[] }) {
+  useEffect(() => {
+    if (assignments.length === 0) return;
+    const visitorId = getVisitorId();
+
+    // Fire view events for each experiment assignment
+    for (const a of assignments) {
+      fetch(`/api/experiments/${a.experimentId}/events`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'view',
+          visitorId,
+          variantId: a.variantId,
+        }),
+        keepalive: true,
+      }).catch(() => { /* ignore tracking failures */ });
+    }
+  }, [assignments]);
+
+  return null;
+}
+
 export function LandingRenderer({
   sections,
   landingId,
   dtrDefaults,
+  experiments = [],
 }: {
   sections: Section[];
   landingId: string;
   dtrDefaults?: DTRDefaults;
+  experiments?: ExperimentData[];
 }) {
   const [urlParams, setUrlParams] = useState<Record<string, string>>({});
+  const [abSections, setAbSections] = useState<Section[] | null>(null);
+  const [abAssignments, setAbAssignments] = useState<ActiveAssignment[]>([]);
 
   useEffect(() => {
     setUrlParams(getUrlParams());
   }, []);
 
+  // A/B testing: assign variants client-side (cookie-sticky)
+  const assignVariants = useCallback(() => {
+    if (experiments.length === 0) return;
+
+    const stored = getStoredAssignments();
+    const newAssignments: ActiveAssignment[] = [];
+    let variantSections: Section[] | null = null;
+
+    for (const exp of experiments) {
+      if (exp.variants.length === 0) continue;
+
+      // Check for stored assignment
+      let assignedVariant = stored[exp.id]
+        ? exp.variants.find((v) => v.id === stored[exp.id])
+        : undefined;
+
+      // New assignment via weighted random
+      if (!assignedVariant) {
+        assignedVariant = weightedRandom(exp.variants);
+        stored[exp.id] = assignedVariant.id;
+      }
+
+      newAssignments.push({
+        experimentId: exp.id,
+        variantId: assignedVariant.id,
+      });
+
+      // If variant has sections, use them instead of default
+      if (!assignedVariant.isControl && Array.isArray(assignedVariant.sections) && assignedVariant.sections.length > 0) {
+        variantSections = assignedVariant.sections as Section[];
+      }
+    }
+
+    storeAssignments(stored);
+    setAbAssignments(newAssignments);
+    if (variantSections) setAbSections(variantSections);
+  }, [experiments]);
+
+  useEffect(() => {
+    assignVariants();
+  }, [assignVariants]);
+
+  // Use variant sections if assigned, otherwise default sections
+  const activeSections = abSections || sections;
+
   // Apply DTR (Dynamic Text Replacement)
   const processedSections = useMemo(() => {
-    if (Object.keys(urlParams).length === 0 && !dtrDefaults) return sections;
-    return sections.map((section) => ({
+    if (Object.keys(urlParams).length === 0 && !dtrDefaults) return activeSections;
+    return activeSections.map((section) => ({
       ...section,
       props: replaceSectionProps(section.props, urlParams, dtrDefaults),
     }));
-  }, [sections, urlParams, dtrDefaults]);
+  }, [activeSections, urlParams, dtrDefaults]);
 
   return (
     <div data-landing-id={landingId}>
       <TrackingScript landingId={landingId} />
+      <ExperimentTracker assignments={abAssignments} />
       {processedSections
         .sort((a, b) => a.order - b.order)
         .map((section) => {

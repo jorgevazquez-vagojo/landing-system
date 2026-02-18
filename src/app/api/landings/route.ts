@@ -3,12 +3,14 @@ import { z } from 'zod';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { slugify } from '@/lib/utils';
+import { getTemplate } from '@/lib/templates';
 
 const createSchema = z.object({
   name: z.string().min(1).max(200),
   slug: z.string().optional(),
   description: z.string().optional(),
   templateId: z.string().optional(),
+  templateSlug: z.string().optional(),
 });
 
 export async function GET() {
@@ -44,7 +46,13 @@ export async function POST(req: Request) {
     const data = createSchema.parse(body);
 
     let sections: unknown[] = [];
-    if (data.templateId) {
+    // Support both DB template (templateId) and catalog template (templateSlug)
+    if (data.templateSlug) {
+      const catalogTemplate = getTemplate(data.templateSlug);
+      if (catalogTemplate) {
+        sections = catalogTemplate.sections;
+      }
+    } else if (data.templateId) {
       const template = await prisma.template.findUnique({ where: { id: data.templateId } });
       if (template) {
         sections = template.sections as unknown[];

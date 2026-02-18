@@ -17,6 +17,7 @@ import { Navigation } from './Navigation';
 import { Embed } from './Embed';
 import { Divider } from './Divider';
 import { MultiStepForm } from './MultiStepForm';
+import { Checkout } from './Checkout';
 import type { ComponentDefinition } from '@/types/component';
 
 export const componentMap: Record<string, React.ComponentType<Record<string, unknown>>> = {
@@ -39,6 +40,7 @@ export const componentMap: Record<string, React.ComponentType<Record<string, unk
   embed: Embed,
   divider: Divider,
   'multi-step-form': MultiStepForm as React.ComponentType<Record<string, unknown>>,
+  checkout: Checkout as React.ComponentType<Record<string, unknown>>,
 };
 
 export const componentRegistry: ComponentDefinition[] = [
@@ -292,6 +294,26 @@ export const componentRegistry: ComponentDefinition[] = [
     },
     propsSchema: [
       { name: 'formConfig', label: 'Form Configuration (JSON)', type: 'array' },
+    ],
+  },
+  {
+    type: 'checkout',
+    name: 'Checkout',
+    icon: 'ShoppingCart',
+    category: 'form',
+    variants: [{ id: 'default', name: 'Default' }, { id: 'card', name: 'Card' }, { id: 'minimal', name: 'Minimal' }],
+    defaultProps: {
+      title: 'Complete Your Purchase',
+      description: 'Secure payment via Stripe',
+      products: [{ name: 'Product', description: 'Premium plan', price: 49, currency: 'USD' }],
+      buttonText: 'Pay Now',
+    },
+    propsSchema: [
+      { name: 'title', label: 'Title', type: 'text' },
+      { name: 'description', label: 'Description', type: 'text' },
+      { name: 'products', label: 'Products', type: 'array' },
+      { name: 'buttonText', label: 'Button Text', type: 'text' },
+      { name: 'stripePublishableKey', label: 'Stripe Publishable Key', type: 'text' },
     ],
   },
   {
