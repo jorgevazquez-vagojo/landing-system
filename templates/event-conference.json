@@ -1,0 +1,14 @@
+{
+  "name": "Event / Conference",
+  "category": "events",
+  "description": "Event landing page with countdown, speakers, schedule, and registration.",
+  "sections": [
+    { "id": "hero-1", "type": "hero", "variant": "gradient", "props": { "title": "Tech Summit 2026", "subtitle": "The premier technology conference. 3 days of talks, workshops, and networking with industry leaders.", "ctaText": "Register Now", "ctaUrl": "#register" }, "order": 0 },
+    { "id": "countdown-1", "type": "countdown", "variant": "hero", "props": { "title": "Event starts in", "targetDate": "2026-06-15T09:00:00Z" }, "order": 1 },
+    { "id": "stats-1", "type": "stats", "variant": "cards", "props": { "items": [{ "value": "50+", "label": "Speakers" }, { "value": "3", "label": "Days" }, { "value": "2,000+", "label": "Attendees" }, { "value": "30+", "label": "Sessions" }] }, "order": 2 },
+    { "id": "feat-1", "type": "features", "variant": "grid-3", "props": { "title": "What to expect", "items": [{ "title": "Keynote Talks", "description": "Hear from the brightest minds in technology.", "icon": "mic" }, { "title": "Hands-on Workshops", "description": "Learn by doing with expert-led sessions.", "icon": "code" }, { "title": "Networking", "description": "Connect with peers and industry leaders.", "icon": "users" }] }, "order": 3 },
+    { "id": "pricing-1", "type": "pricing", "variant": "three-tier", "props": { "title": "Tickets", "plans": [{ "name": "Early Bird", "price": "$299", "features": ["All sessions", "Workshop access", "Networking events", "Conference swag"], "ctaText": "Buy Ticket" }, { "name": "VIP", "price": "$599", "features": ["Everything in Early Bird", "Front row seating", "Speaker dinner", "1-on-1 mentoring"], "ctaText": "Buy VIP", "highlighted": true }, { "name": "Team", "price": "$1,999", "description": "Up to 5 people", "features": ["5 VIP tickets", "Private team room", "Dedicated concierge"], "ctaText": "Buy Team" }] }, "order": 4 },
+    { "id": "form-1", "type": "contact-form", "variant": "default", "props": { "title": "Register Now", "fields": ["name", "email", "company"], "submitText": "Reserve My Spot" }, "order": 5 },
+    { "id": "footer-1", "type": "footer", "variant": "simple", "props": { "companyName": "Tech Summit", "year": 2026 }, "order": 6 }
+  ]
+}

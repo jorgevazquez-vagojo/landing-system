@@ -1,0 +1,14 @@
+{
+  "name": "Real Estate",
+  "category": "realestate",
+  "description": "Property listing landing page with gallery, features, and contact form.",
+  "sections": [
+    { "id": "hero-1", "type": "hero", "variant": "video-bg", "props": { "title": "Find Your Dream Home", "subtitle": "Luxury properties in the most desirable locations. Schedule a viewing today.", "ctaText": "Browse Properties", "ctaUrl": "#properties" }, "order": 0 },
+    { "id": "stats-1", "type": "stats", "variant": "row", "props": { "items": [{ "value": "500+", "label": "Properties" }, { "value": "98%", "label": "Client Satisfaction" }, { "value": "15+", "label": "Years Experience" }, { "value": "$2B+", "label": "Sales Volume" }] }, "order": 1 },
+    { "id": "feat-1", "type": "features", "variant": "grid-3", "props": { "title": "Why choose us", "items": [{ "title": "Expert Agents", "description": "Our experienced team knows the market inside and out.", "icon": "users" }, { "title": "Premium Listings", "description": "Exclusive access to the finest properties on the market.", "icon": "home" }, { "title": "Seamless Process", "description": "From search to closing, we handle everything.", "icon": "check" }] }, "order": 2 },
+    { "id": "gallery-1", "type": "gallery", "variant": "grid", "props": { "images": [] }, "order": 3 },
+    { "id": "test-1", "type": "testimonials", "variant": "cards", "props": { "title": "Happy homeowners", "items": [{ "name": "Robert & Sarah Kim", "role": "New Homeowners", "quote": "They found us the perfect home in just 2 weeks. Incredible service." }] }, "order": 4 },
+    { "id": "form-1", "type": "contact-form", "variant": "default", "props": { "title": "Schedule a Viewing", "fields": ["name", "email", "phone", "message"], "submitText": "Request Viewing" }, "order": 5 },
+    { "id": "footer-1", "type": "footer", "variant": "columns", "props": { "companyName": "Prestige Realty", "year": 2026, "links": [{ "label": "Properties", "url": "#" }, { "label": "About", "url": "#" }, { "label": "Contact", "url": "#" }] }, "order": 6 }
+  ]
+}

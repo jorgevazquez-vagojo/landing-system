@@ -1,0 +1,14 @@
+{
+  "name": "Fitness & Gym",
+  "category": "fitness",
+  "description": "Fitness gym landing page with membership plans, trainers, and trial signup.",
+  "sections": [
+    { "id": "hero-1", "type": "hero", "variant": "gradient", "props": { "title": "Transform Your Body. Transform Your Life.", "subtitle": "State-of-the-art equipment, expert trainers, and a community that pushes you to be your best.", "ctaText": "Start Free Trial", "ctaUrl": "#pricing" }, "order": 0 },
+    { "id": "stats-1", "type": "stats", "variant": "row", "props": { "items": [{ "value": "50+", "label": "Classes/Week" }, { "value": "20+", "label": "Expert Trainers" }, { "value": "5,000+", "label": "Members" }, { "value": "24/7", "label": "Access" }] }, "order": 1 },
+    { "id": "feat-1", "type": "features", "variant": "grid-3", "props": { "title": "Why join us", "items": [{ "title": "Personal Training", "description": "1-on-1 sessions with certified trainers tailored to your goals.", "icon": "target" }, { "title": "Group Classes", "description": "From yoga to HIIT, find the class that fits your vibe.", "icon": "users" }, { "title": "Nutrition Plans", "description": "Custom meal plans designed by our nutrition experts.", "icon": "heart" }] }, "order": 2 },
+    { "id": "pricing-1", "type": "pricing", "variant": "three-tier", "props": { "title": "Membership Plans", "plans": [{ "name": "Basic", "price": "$29/mo", "features": ["Gym access", "Locker room", "Free WiFi"], "ctaText": "Join Now" }, { "name": "Premium", "price": "$59/mo", "features": ["Everything in Basic", "All group classes", "Sauna access", "1 PT session/month"], "ctaText": "Join Now", "highlighted": true }, { "name": "Elite", "price": "$99/mo", "features": ["Everything in Premium", "4 PT sessions/month", "Nutrition plan", "Priority booking"], "ctaText": "Join Now" }] }, "order": 3 },
+    { "id": "test-1", "type": "testimonials", "variant": "cards", "props": { "title": "Member stories", "items": [{ "name": "Jake Morrison", "role": "Member since 2024", "quote": "Lost 30 pounds in 6 months. The trainers here are amazing." }] }, "order": 4 },
+    { "id": "form-1", "type": "contact-form", "variant": "default", "props": { "title": "Start Your Free Trial", "fields": ["name", "email", "phone"], "submitText": "Claim Free Trial" }, "order": 5 },
+    { "id": "footer-1", "type": "footer", "variant": "simple", "props": { "companyName": "Peak Fitness", "year": 2026 }, "order": 6 }
+  ]
+}

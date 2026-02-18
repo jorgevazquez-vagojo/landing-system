@@ -1,0 +1,15 @@
+{
+  "name": "Financial Services",
+  "category": "finance",
+  "description": "Professional financial services landing page with trust signals, services, and consultation form.",
+  "sections": [
+    { "id": "nav-1", "type": "navigation", "variant": "default", "props": { "logo": "Apex Capital", "links": [{ "label": "Services", "url": "#services" }, { "label": "About", "url": "#about" }, { "label": "Contact", "url": "#contact" }] }, "order": 0 },
+    { "id": "hero-1", "type": "hero", "variant": "split", "props": { "title": "Your wealth deserves expert guidance", "subtitle": "Personalized financial planning and investment management for individuals and businesses. Trusted by 2,000+ clients since 2005.", "ctaText": "Book Free Consultation", "ctaUrl": "#contact" }, "order": 1 },
+    { "id": "stats-1", "type": "stats", "variant": "row", "props": { "items": [{ "value": "$5B+", "label": "Assets Managed" }, { "value": "2,000+", "label": "Clients" }, { "value": "20+", "label": "Years Experience" }, { "value": "98%", "label": "Retention Rate" }] }, "order": 2 },
+    { "id": "feat-1", "type": "features", "variant": "cards", "props": { "title": "Our Services", "items": [{ "title": "Wealth Management", "description": "Comprehensive portfolio management tailored to your goals and risk tolerance.", "icon": "trending-up" }, { "title": "Retirement Planning", "description": "Secure your future with strategies designed to maximize your retirement income.", "icon": "shield" }, { "title": "Tax Optimization", "description": "Minimize your tax burden with smart, legal strategies.", "icon": "calculator" }] }, "order": 3 },
+    { "id": "test-1", "type": "testimonials", "variant": "cards", "props": { "title": "Client testimonials", "items": [{ "name": "Richard & Patricia M.", "role": "Clients since 2015", "quote": "They've grown our portfolio by 180% while keeping us informed every step of the way." }, { "name": "Jennifer L.", "role": "Business Owner", "quote": "Their tax optimization strategies saved our company over $200K last year alone." }] }, "order": 4 },
+    { "id": "faq-1", "type": "faq", "variant": "accordion", "props": { "title": "Common Questions", "items": [{ "question": "What's the minimum investment?", "answer": "We work with clients starting at $100,000 in investable assets." }, { "question": "How are your fees structured?", "answer": "We charge a transparent percentage-based fee on assets under management. No hidden costs." }, { "question": "Is my initial consultation really free?", "answer": "Yes. Your first meeting is complimentary with no obligation." }] }, "order": 5 },
+    { "id": "form-1", "type": "contact-form", "variant": "split", "props": { "title": "Book Your Free Consultation", "fields": ["name", "email", "phone", "message"], "submitText": "Schedule Consultation" }, "order": 6 },
+    { "id": "footer-1", "type": "footer", "variant": "columns", "props": { "companyName": "Apex Capital", "year": 2026, "links": [{ "label": "Privacy Policy", "url": "#" }, { "label": "Disclosures", "url": "#" }, { "label": "Contact", "url": "#" }] }, "order": 7 }
+  ]
+}

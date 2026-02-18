@@ -1,0 +1,15 @@
+{
+  "name": "Agency Portfolio",
+  "category": "agency",
+  "description": "Creative agency portfolio with work showcase, services, and contact form.",
+  "sections": [
+    { "id": "nav-1", "type": "navigation", "variant": "default", "props": { "logo": "Studio X", "links": [{ "label": "Work", "url": "#work" }, { "label": "Services", "url": "#services" }, { "label": "Contact", "url": "#contact" }] }, "order": 0 },
+    { "id": "hero-1", "type": "hero", "variant": "minimal", "props": { "title": "We design brands that people love", "subtitle": "Strategy. Design. Development. We help ambitious brands make an impact through thoughtful digital experiences.", "ctaText": "See our work →", "ctaUrl": "#work" }, "order": 1 },
+    { "id": "logos-1", "type": "logo-cloud", "variant": "with-title", "props": { "title": "Clients we've worked with", "logos": [] }, "order": 2 },
+    { "id": "feat-1", "type": "features", "variant": "cards", "props": { "title": "Our services", "items": [{ "title": "Brand Strategy", "description": "We define your brand's DNA—positioning, voice, and visual identity.", "icon": "compass" }, { "title": "Web Design", "description": "Beautiful, conversion-focused websites that tell your story.", "icon": "monitor" }, { "title": "Development", "description": "Clean, performant code that brings designs to life.", "icon": "code" }] }, "order": 3 },
+    { "id": "stats-1", "type": "stats", "variant": "cards", "props": { "items": [{ "value": "200+", "label": "Projects" }, { "value": "50+", "label": "Clients" }, { "value": "12", "label": "Awards" }, { "value": "8", "label": "Years" }] }, "order": 4 },
+    { "id": "test-1", "type": "testimonials", "variant": "cards", "props": { "title": "What our clients say", "items": [{ "name": "Amy Foster", "role": "CEO, BrandCo", "quote": "Studio X transformed our brand. The results speak for themselves." }] }, "order": 5 },
+    { "id": "form-1", "type": "contact-form", "variant": "split", "props": { "title": "Let's work together", "fields": ["name", "email", "company", "message"], "submitText": "Start a Project" }, "order": 6 },
+    { "id": "footer-1", "type": "footer", "variant": "simple", "props": { "companyName": "Studio X", "year": 2026 }, "order": 7 }
+  ]
+}

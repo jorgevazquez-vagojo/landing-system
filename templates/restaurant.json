@@ -1,0 +1,13 @@
+{
+  "name": "Restaurant",
+  "category": "restaurant",
+  "description": "Restaurant landing page with menu highlights, ambiance gallery, and reservation form.",
+  "sections": [
+    { "id": "hero-1", "type": "hero", "variant": "video-bg", "props": { "title": "A Culinary Experience", "subtitle": "Fresh, seasonal ingredients transformed into unforgettable dishes. Reserve your table today.", "ctaText": "Reserve a Table", "ctaUrl": "#reserve" }, "order": 0 },
+    { "id": "feat-1", "type": "features", "variant": "cards", "props": { "title": "Our Philosophy", "items": [{ "title": "Farm to Table", "description": "We source ingredients from local farms every morning.", "icon": "leaf" }, { "title": "Crafted with Love", "description": "Every dish is prepared with passion by our award-winning chefs.", "icon": "heart" }, { "title": "Seasonal Menu", "description": "Our menu changes with the seasons for the freshest experience.", "icon": "calendar" }] }, "order": 1 },
+    { "id": "gallery-1", "type": "gallery", "variant": "masonry", "props": { "images": [] }, "order": 2 },
+    { "id": "test-1", "type": "testimonials", "variant": "cards", "props": { "title": "What diners say", "items": [{ "name": "Food & Wine Magazine", "role": "Review", "quote": "A dining experience that transcends expectations. A must-visit." }, { "name": "Michael R.", "role": "Regular Guest", "quote": "My favorite restaurant in the city. The tasting menu is extraordinary." }] }, "order": 3 },
+    { "id": "form-1", "type": "contact-form", "variant": "minimal", "props": { "title": "Make a Reservation", "fields": ["name", "email", "phone"], "submitText": "Reserve My Table" }, "order": 4 },
+    { "id": "footer-1", "type": "footer", "variant": "columns", "props": { "companyName": "Maison Belle", "year": 2026, "links": [{ "label": "Menu", "url": "#" }, { "label": "Location", "url": "#" }, { "label": "Contact", "url": "#" }] }, "order": 5 }
+  ]
+}

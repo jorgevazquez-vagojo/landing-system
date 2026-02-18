@@ -1,0 +1,204 @@
+// ---------------------------------------------------------------------------
+// JSON-LD structured data generator (Schema.org)
+// ---------------------------------------------------------------------------
+
+/**
+ * Minimal landing representation used by the structured-data generator.
+ */
+export interface LandingForSchema {
+  name: string;
+  slug: string;
+  description?: string | null;
+  sections?: LandingSection[] | unknown;
+  publishedAt?: Date | string | null;
+  updatedAt?: Date | string;
+}
+
+/**
+ * Represents a single section on a landing page.
+ * The generator inspects sections of type "faq" to build a FAQPage schema.
+ */
+export interface LandingSection {
+  type: string;
+  props?: Record<string, unknown>;
+}
+
+/**
+ * A FAQ item extracted from an FAQ section.
+ */
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+/**
+ * Company information used for the Organization schema.
+ */
+export interface CompanyForSchema {
+  name: string;
+  slug: string;
+  logo?: string | null;
+  url?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function isoDate(value?: Date | string | null): string | undefined {
+  if (!value) return undefined;
+  return new Date(value).toISOString();
+}
+
+/**
+ * Extract FAQ items from landing sections.
+ * Sections of type "faq" are expected to have `props.items` as an array of
+ * `{ question, answer }` objects.
+ */
+function extractFaqItems(sections: unknown): FaqItem[] {
+  if (!Array.isArray(sections)) return [];
+
+  const items: FaqItem[] = [];
+
+  for (const section of sections) {
+    if (
+      typeof section === 'object' &&
+      section !== null &&
+      (section as LandingSection).type === 'faq'
+    ) {
+      const props = (section as LandingSection).props;
+      const raw = props?.items;
+      if (Array.isArray(raw)) {
+        for (const item of raw) {
+          if (
+            typeof item === 'object' &&
+            item !== null &&
+            typeof (item as FaqItem).question === 'string' &&
+            typeof (item as FaqItem).answer === 'string'
+          ) {
+            items.push({
+              question: (item as FaqItem).question,
+              answer: (item as FaqItem).answer,
+            });
+          }
+        }
+      }
+    }
+  }
+
+  return items;
+}
+
+// ---------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------
+
+/**
+ * Generate an array of JSON-LD structured data objects for a landing page.
+ *
+ * Included schemas:
+ *   - Organization (from company info)
+ *   - WebPage (from landing metadata)
+ *   - BreadcrumbList (Home > Landing)
+ *   - FAQPage (only when FAQ sections exist)
+ */
+export function generateStructuredData(
+  landing: LandingForSchema,
+  company: CompanyForSchema,
+): Record<string, unknown>[] {
+  const baseUrl = company.url || '';
+  const landingUrl = `${baseUrl}/${landing.slug}`;
+
+  const schemas: Record<string, unknown>[] = [];
+
+  // -- Organization ----------------------------------------------------------
+  const organization: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: company.name,
+    url: baseUrl || undefined,
+  };
+  if (company.logo) {
+    organization.logo = company.logo;
+  }
+  schemas.push(organization);
+
+  // -- WebPage ---------------------------------------------------------------
+  const webPage: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: landing.name,
+    url: landingUrl,
+  };
+  if (landing.description) {
+    webPage.description = landing.description;
+  }
+  if (landing.publishedAt) {
+    webPage.datePublished = isoDate(landing.publishedAt);
+  }
+  if (landing.updatedAt) {
+    webPage.dateModified = isoDate(landing.updatedAt);
+  }
+  webPage.publisher = {
+    '@type': 'Organization',
+    name: company.name,
+  };
+  schemas.push(webPage);
+
+  // -- BreadcrumbList --------------------------------------------------------
+  schemas.push({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: baseUrl || '/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: landing.name,
+        item: landingUrl,
+      },
+    ],
+  });
+
+  // -- FAQPage (conditional) -------------------------------------------------
+  const faqItems = extractFaqItems(landing.sections);
+  if (faqItems.length > 0) {
+    schemas.push({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqItems.map((item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.answer,
+        },
+      })),
+    });
+  }
+
+  return schemas;
+}
+
+/**
+ * Convenience wrapper that returns the full `<script>` tag content string
+ * ready to be injected into the `<head>`.
+ */
+export function generateJsonLdScript(
+  landing: LandingForSchema,
+  company: CompanyForSchema,
+): string {
+  const data = generateStructuredData(landing, company);
+
+  return data
+    .map(
+      (schema) =>
+        `<script type="application/ld+json">${JSON.stringify(schema)}</script>`,
+    )
+    .join('\n');
+}
