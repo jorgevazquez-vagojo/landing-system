@@ -54,24 +54,24 @@ export default async function SeoPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">SEO Audit</h1>
-        <p className="text-sm text-gray-500">Review and improve your landing pages&apos; search engine optimization.</p>
+        <h1 className="text-2xl font-bold text-foreground">SEO Audit</h1>
+        <p className="text-sm text-muted-foreground">Review and improve your landing pages&apos; search engine optimization.</p>
       </div>
 
-      <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
-        <div className="rounded-xl bg-white p-6 shadow-sm text-center">
-          <p className="text-sm font-medium text-gray-500">Average SEO Score</p>
-          <p className={`mt-2 text-4xl font-bold ${avgScore >= 80 ? 'text-green-600' : avgScore >= 50 ? 'text-yellow-600' : 'text-red-600'}`}>
+      <div className="stagger-children mb-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <div className="rounded-xl bg-card p-6 shadow-sm text-center">
+          <p className="text-sm font-medium text-muted-foreground">Average SEO Score</p>
+          <p className={`mt-2 text-4xl font-bold ${avgScore >= 80 ? 'text-green-600 dark:text-green-400' : avgScore >= 50 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'}`}>
             {avgScore}
           </p>
         </div>
-        <div className="rounded-xl bg-white p-6 shadow-sm text-center">
-          <p className="text-sm font-medium text-gray-500">Total Pages</p>
-          <p className="mt-2 text-4xl font-bold text-gray-900">{landings.length}</p>
+        <div className="rounded-xl bg-card p-6 shadow-sm text-center">
+          <p className="text-sm font-medium text-muted-foreground">Total Pages</p>
+          <p className="mt-2 text-4xl font-bold text-card-foreground">{landings.length}</p>
         </div>
-        <div className="rounded-xl bg-white p-6 shadow-sm text-center">
-          <p className="text-sm font-medium text-gray-500">Issues Found</p>
-          <p className="mt-2 text-4xl font-bold text-orange-600">
+        <div className="rounded-xl bg-card p-6 shadow-sm text-center">
+          <p className="text-sm font-medium text-muted-foreground">Issues Found</p>
+          <p className="mt-2 text-4xl font-bold text-orange-600 dark:text-orange-400">
             {audits.reduce((sum, a) => sum + a.seo.issues.length, 0)}
           </p>
         </div>
@@ -79,7 +79,7 @@ export default async function SeoPage() {
 
       <div className="space-y-4">
         {audits.map((landing) => (
-          <div key={landing.id} className="rounded-xl bg-white p-5 shadow-sm">
+          <div key={landing.id} className="rounded-xl bg-card p-5 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className={`flex h-12 w-12 items-center justify-center rounded-lg text-lg font-bold text-white ${
@@ -88,14 +88,14 @@ export default async function SeoPage() {
                   {landing.seo.score}
                 </div>
                 <div>
-                  <Link href={`/editor/${landing.id}`} className="font-semibold text-gray-900 hover:text-primary">
+                  <Link href={`/editor/${landing.id}`} className="font-semibold text-card-foreground hover:text-primary transition-colors">
                     {landing.name}
                   </Link>
-                  <p className="text-sm text-gray-500">/{landing.slug}</p>
+                  <p className="text-sm text-muted-foreground">/{landing.slug}</p>
                 </div>
               </div>
               <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                landing.status === 'PUBLISHED' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                landing.status === 'PUBLISHED' ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400'
               }`}>
                 {landing.status}
               </span>
@@ -103,7 +103,7 @@ export default async function SeoPage() {
             {landing.seo.issues.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-2">
                 {landing.seo.issues.map((issue, i) => (
-                  <span key={i} className="rounded-full bg-orange-50 px-2.5 py-0.5 text-xs text-orange-700">
+                  <span key={i} className="rounded-full bg-orange-50 px-2.5 py-0.5 text-xs text-orange-700 dark:bg-orange-500/10 dark:text-orange-400">
                     {issue}
                   </span>
                 ))}

@@ -1,19 +1,24 @@
 'use client';
 
 import { signOut, useSession } from 'next-auth/react';
+import { ThemeToggle } from './theme-toggle';
+import { MobileSidebar } from './mobile-sidebar';
 
 export function Header() {
   const { data: session } = useSession();
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-border bg-white px-6">
-      <div />
-      <div className="flex items-center gap-4">
+    <header className="flex h-16 items-center justify-between border-b border-border bg-card px-4 sm:px-6">
+      <div className="flex items-center gap-2">
+        <MobileSidebar />
+      </div>
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
         {session?.user && (
           <div className="flex items-center gap-3">
-            <div className="text-right">
-              <p className="text-sm font-medium text-gray-900">{session.user.name}</p>
-              <p className="text-xs text-gray-500">
+            <div className="hidden text-right sm:block">
+              <p className="text-sm font-medium text-card-foreground">{session.user.name}</p>
+              <p className="text-xs text-muted-foreground">
                 {(session.user as Record<string, unknown>).companyName as string}
               </p>
             </div>
@@ -22,7 +27,7 @@ export function Header() {
             </div>
             <button
               onClick={() => signOut({ callbackUrl: '/login' })}
-              className="rounded-lg px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100"
+              className="rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             >
               Sign out
             </button>

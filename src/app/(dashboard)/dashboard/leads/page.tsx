@@ -20,47 +20,51 @@ export default async function LeadsPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Leads</h1>
-          <p className="text-sm text-gray-500">{leads.length} total leads captured</p>
+          <h1 className="text-2xl font-bold text-foreground">Leads</h1>
+          <p className="text-sm text-muted-foreground">{leads.length} total leads captured</p>
         </div>
       </div>
 
       {leads.length === 0 ? (
-        <div className="rounded-xl bg-white py-16 text-center shadow-sm">
-          <div className="text-4xl">📬</div>
-          <h3 className="mt-4 text-lg font-semibold text-gray-900">No leads yet</h3>
-          <p className="mt-1 text-gray-500">Leads will appear here when visitors submit forms on your landing pages.</p>
+        <div className="rounded-xl bg-card py-16 text-center shadow-sm">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-500/20">
+            <svg className="h-8 w-8 text-purple-600 dark:text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m7-10a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
+            </svg>
+          </div>
+          <h3 className="mt-4 text-lg font-semibold text-card-foreground">No leads yet</h3>
+          <p className="mt-1 text-muted-foreground">Leads will appear here when visitors submit forms on your landing pages.</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl bg-white shadow-sm">
+        <div className="overflow-hidden rounded-xl bg-card shadow-sm ring-1 ring-border/50">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-100 bg-gray-50">
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Contact</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Landing</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Source</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Date</th>
+              <tr className="border-b border-border bg-muted">
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Contact</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Landing</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Source</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-border">
               {leads.map((lead) => (
-                <tr key={lead.id} className="hover:bg-gray-50">
+                <tr key={lead.id} className="transition-colors hover:bg-muted/50">
                   <td className="px-6 py-4">
                     <div>
-                      <p className="font-medium text-gray-900">{lead.name || lead.email}</p>
-                      <p className="text-sm text-gray-500">{lead.email}</p>
-                      {lead.phone && <p className="text-sm text-gray-400">{lead.phone}</p>}
+                      <p className="font-medium text-card-foreground">{lead.name || lead.email}</p>
+                      <p className="text-sm text-muted-foreground">{lead.email}</p>
+                      {lead.phone && <p className="text-sm text-muted-foreground/70">{lead.phone}</p>}
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-sm text-gray-600">{lead.landing.name}</span>
+                    <span className="text-sm text-card-foreground">{lead.landing.name}</span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+                    <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-500/20 dark:text-blue-400">
                       {lead.source}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-muted-foreground">
                     {formatDate(lead.createdAt)}
                   </td>
                 </tr>

@@ -17,29 +17,35 @@ export default async function MediaPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Media Library</h1>
-          <p className="text-sm text-gray-500">{media.length} files</p>
+          <h1 className="text-2xl font-bold text-foreground">Media Library</h1>
+          <p className="text-sm text-muted-foreground">{media.length} files</p>
         </div>
-        <label className="cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+        <label className="cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:shadow-md">
           Upload File
           <input type="file" className="hidden" accept="image/*" />
         </label>
       </div>
 
       {media.length === 0 ? (
-        <div className="rounded-xl bg-white py-16 text-center shadow-sm">
-          <div className="text-4xl">🖼️</div>
-          <h3 className="mt-4 text-lg font-semibold text-gray-900">No media yet</h3>
-          <p className="mt-1 text-gray-500">Upload images to use in your landing pages.</p>
+        <div className="rounded-xl bg-card py-16 text-center shadow-sm">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+            <svg className="h-8 w-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+          </div>
+          <h3 className="mt-4 text-lg font-semibold text-card-foreground">No media yet</h3>
+          <p className="mt-1 text-muted-foreground">Upload images to use in your landing pages.</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {media.map((item) => (
-            <div key={item.id} className="group relative aspect-square overflow-hidden rounded-lg bg-gray-100">
+            <div key={item.id} className="group relative aspect-square overflow-hidden rounded-lg bg-muted ring-1 ring-border/50 transition-all hover:ring-border hover:shadow-md">
               {item.type.startsWith('image/') ? (
                 <img src={item.url} alt={item.name} className="h-full w-full object-cover" />
               ) : (
-                <div className="flex h-full items-center justify-center text-gray-400">
+                <div className="flex h-full items-center justify-center text-muted-foreground">
                   <span className="text-sm">{item.name}</span>
                 </div>
               )}

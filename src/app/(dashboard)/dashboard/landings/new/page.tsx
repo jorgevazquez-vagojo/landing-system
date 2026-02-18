@@ -38,19 +38,19 @@ export default function NewLandingPage() {
   return (
     <div className="mx-auto max-w-lg">
       <div className="mb-6">
-        <Link href="/dashboard/landings" className="text-sm text-gray-500 hover:text-gray-700">
+        <Link href="/dashboard/landings" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
           &larr; Back to landings
         </Link>
-        <h1 className="mt-2 text-2xl font-bold text-gray-900">New Landing Page</h1>
+        <h1 className="mt-2 text-2xl font-bold text-foreground">New Landing Page</h1>
       </div>
 
       {error && (
-        <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</div>
+        <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-500/10 dark:text-red-400">{error}</div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4 rounded-xl bg-white p-6 shadow-sm">
+      <form onSubmit={handleSubmit} className="space-y-4 rounded-xl bg-card p-6 shadow-sm ring-1 ring-border/50">
         <div>
-          <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700">
+          <label htmlFor="name" className="mb-1 block text-sm font-medium text-card-foreground">
             Name
           </label>
           <input
@@ -58,20 +58,20 @@ export default function NewLandingPage() {
             name="name"
             type="text"
             required
-            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+            className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-shadow"
             placeholder="My Landing Page"
           />
         </div>
 
         <div>
-          <label htmlFor="description" className="mb-1 block text-sm font-medium text-gray-700">
+          <label htmlFor="description" className="mb-1 block text-sm font-medium text-card-foreground">
             Description (optional)
           </label>
           <textarea
             id="description"
             name="description"
             rows={3}
-            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+            className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-shadow"
             placeholder="What is this landing page for?"
           />
         </div>
@@ -80,13 +80,13 @@ export default function NewLandingPage() {
           <button
             type="submit"
             disabled={loading}
-            className="rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+            className="rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:shadow-md disabled:opacity-50"
           >
             {loading ? 'Creating...' : 'Create & Edit'}
           </button>
           <Link
             href="/dashboard/landings"
-            className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:bg-muted"
           >
             Cancel
           </Link>

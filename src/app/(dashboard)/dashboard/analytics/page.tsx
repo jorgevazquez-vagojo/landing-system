@@ -32,47 +32,49 @@ export default async function AnalyticsPage() {
     })
   );
 
+  const stats = [
+    { label: 'Total Landings', value: totalLandings, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-100 dark:bg-blue-500/20' },
+    { label: 'Published', value: publishedLandings, color: 'text-green-600 dark:text-green-400', bg: 'bg-green-100 dark:bg-green-500/20' },
+    { label: 'Total Leads', value: totalLeads, color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-100 dark:bg-purple-500/20' },
+    { label: 'Conversion Rate', value: totalLandings > 0 ? `${((totalLeads / Math.max(totalLandings, 1)) * 100).toFixed(1)}%` : '0%', color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-100 dark:bg-orange-500/20' },
+  ];
+
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Analytics</h1>
-        <p className="text-sm text-gray-500">Overview of your landing page performance.</p>
+        <h1 className="text-2xl font-bold text-foreground">Analytics</h1>
+        <p className="text-sm text-muted-foreground">Overview of your landing page performance.</p>
       </div>
 
-      <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          { label: 'Total Landings', value: totalLandings, color: 'text-blue-600', bg: 'bg-blue-50' },
-          { label: 'Published', value: publishedLandings, color: 'text-green-600', bg: 'bg-green-50' },
-          { label: 'Total Leads', value: totalLeads, color: 'text-purple-600', bg: 'bg-purple-50' },
-          { label: 'Conversion Rate', value: totalLandings > 0 ? `${((totalLeads / Math.max(totalLandings, 1)) * 100).toFixed(1)}%` : '0%', color: 'text-orange-600', bg: 'bg-orange-50' },
-        ].map((stat) => (
-          <div key={stat.label} className="rounded-xl bg-white p-6 shadow-sm">
-            <p className="text-sm font-medium text-gray-500">{stat.label}</p>
+      <div className="stagger-children mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat) => (
+          <div key={stat.label} className="rounded-xl bg-card p-6 shadow-sm transition-shadow hover:shadow-md">
+            <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
             <p className={`mt-2 text-3xl font-bold ${stat.color}`}>{stat.value}</p>
           </div>
         ))}
       </div>
 
-      <div className="rounded-xl bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Top Performing Landings</h2>
+      <div className="rounded-xl bg-card p-6 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-card-foreground">Top Performing Landings</h2>
         {topLandings.length === 0 ? (
-          <p className="text-gray-500">No data yet. Leads will be tracked here.</p>
+          <p className="text-muted-foreground">No data yet. Leads will be tracked here.</p>
         ) : (
           <div className="space-y-3">
             {topLandings.map((item, i) => (
-              <div key={item.landingId} className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3">
+              <div key={item.landingId} className="flex items-center justify-between rounded-lg bg-muted/50 px-4 py-3 transition-colors hover:bg-muted">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-600">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-600 dark:bg-blue-500/20 dark:text-blue-400">
                     {i + 1}
                   </span>
                   <div>
-                    <p className="font-medium text-gray-900">{item.landing?.name || 'Unknown'}</p>
-                    <p className="text-xs text-gray-500">/{item.landing?.slug}</p>
+                    <p className="font-medium text-card-foreground">{item.landing?.name || 'Unknown'}</p>
+                    <p className="text-xs text-muted-foreground">/{item.landing?.slug}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg font-bold text-gray-900">{item._count.id}</p>
-                  <p className="text-xs text-gray-500">leads</p>
+                  <p className="text-lg font-bold text-card-foreground">{item._count.id}</p>
+                  <p className="text-xs text-muted-foreground">leads</p>
                 </div>
               </div>
             ))}

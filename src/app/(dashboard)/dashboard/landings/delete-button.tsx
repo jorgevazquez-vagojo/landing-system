@@ -17,7 +17,7 @@ export function DeleteLandingButton({ landingId, landingName }: { landingId: str
   return (
     <button
       onClick={handleDelete}
-      className="ml-auto rounded-lg px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50"
+      className="ml-auto rounded-lg px-3 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
     >
       Delete
     </button>

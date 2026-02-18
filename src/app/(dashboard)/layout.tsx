@@ -10,11 +10,13 @@ export default function DashboardLayout({
   return (
     <SessionProvider>
       <div className="flex h-screen">
-        <Sidebar />
+        <div className="hidden lg:block">
+          <Sidebar />
+        </div>
         <div className="flex flex-1 flex-col overflow-hidden">
           <Header />
-          <main className="flex-1 overflow-y-auto bg-gray-50 p-6">
-            {children}
+          <main className="flex-1 overflow-y-auto bg-gray-50 p-4 dark:bg-background sm:p-6">
+            <div className="animate-fade-in">{children}</div>
           </main>
         </div>
       </div>
