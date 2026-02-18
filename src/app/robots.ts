@@ -5,9 +5,16 @@ export default function robots(): MetadataRoute.Robots {
 
   return {
     rules: [
+      // General crawlers
       {
         userAgent: '*',
-        allow: '/p/',
+        allow: ['/p/', '/llms.txt', '/.well-known/'],
+        disallow: ['/dashboard/', '/editor/', '/api/', '/login', '/register'],
+      },
+      // LLM crawlers — explicit allow for published pages
+      {
+        userAgent: ['GPTBot', 'ChatGPT-User', 'Claude-Web', 'ClaudeBot', 'PerplexityBot', 'Applebot-Extended', 'cohere-ai', 'Google-Extended'],
+        allow: ['/p/', '/llms.txt', '/.well-known/', '/sitemap.xml'],
         disallow: ['/dashboard/', '/editor/', '/api/', '/login', '/register'],
       },
     ],
