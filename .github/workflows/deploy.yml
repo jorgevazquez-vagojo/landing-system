@@ -1,0 +1,153 @@
+name: Deploy
+
+on:
+  push:
+    branches: [dev, staging, main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Entorno'
+        required: true
+        default: 'dev'
+        type: choice
+        options: [dev, staging, prod]
+
+env:
+  SERVICE: landing-system
+  PORT: 9460
+  HEALTH: /api/health
+
+jobs:
+  # ── DEV ────────────────────────────────────────────────────────────────────
+  deploy-dev:
+    name: Deploy → DEV
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'dev')
+    environment:
+      name: dev
+      url: http://${{ secrets.DEV_HOST }}:${{ env.PORT }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add server to known_hosts
+        run: ssh-keyscan -H ${{ secrets.DEV_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Backup (pre-deploy)
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.DEV_HOST }} \
+            "~/scripts/backup-service.sh $SERVICE dev" || true
+
+      - name: Rsync código
+        run: |
+          rsync -avz --delete \
+            --exclude='.git/' --exclude='node_modules/' --exclude='.next/' \
+            --exclude='dist/' --exclude='__pycache__/' --exclude='.venv/' \
+            --exclude='*.pyc' --exclude='.hf_cache/' --exclude='*.log' \
+            --exclude='.env' --exclude='.env.local' \
+            ./ ${{ secrets.SSH_USER }}@${{ secrets.DEV_HOST }}:/home/${{ secrets.SSH_USER }}/projects/$SERVICE/
+
+      - name: Deploy en servidor
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.DEV_HOST }} \
+            "~/scripts/ci-deploy.sh $SERVICE dev"
+
+      - name: Healthcheck
+        run: |
+          sleep 10
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.DEV_HOST }} \
+            "curl -sf http://localhost:$PORT$HEALTH && echo 'OK'" || \
+            (ssh ${{ secrets.SSH_USER }}@${{ secrets.DEV_HOST }} \
+              "docker logs --tail=30 \$(docker ps -qf name=$SERVICE-app)" && exit 1)
+
+  # ── STAGING ────────────────────────────────────────────────────────────────
+  deploy-staging:
+    name: Deploy → STAGING
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging')
+    environment:
+      name: staging
+      url: http://${{ secrets.STAGING_HOST }}:${{ env.PORT }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add server to known_hosts
+        run: ssh-keyscan -H ${{ secrets.STAGING_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Backup (pre-deploy)
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.STAGING_HOST }} \
+            "~/scripts/backup-service.sh $SERVICE staging" || true
+
+      - name: Rsync código
+        run: |
+          rsync -avz --delete \
+            --exclude='.git/' --exclude='node_modules/' --exclude='.next/' \
+            --exclude='dist/' --exclude='__pycache__/' --exclude='.venv/' \
+            --exclude='*.pyc' --exclude='.hf_cache/' --exclude='*.log' \
+            --exclude='.env' --exclude='.env.local' \
+            ./ ${{ secrets.SSH_USER }}@${{ secrets.STAGING_HOST }}:/home/${{ secrets.SSH_USER }}/projects/$SERVICE/
+
+      - name: Deploy en servidor
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.STAGING_HOST }} \
+            "~/scripts/ci-deploy.sh $SERVICE staging"
+
+      - name: Healthcheck
+        run: |
+          sleep 10
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.STAGING_HOST }} \
+            "curl -sf http://localhost:$PORT$HEALTH && echo 'OK'"
+
+  # ── PRODUCTION ─────────────────────────────────────────────────────────────
+  deploy-prod:
+    name: Deploy → PRODUCTION ⚠️
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'prod')
+    environment:
+      name: production       # ← configurar en GitHub como "required reviewers"
+      url: http://${{ secrets.PROD_HOST }}:${{ env.PORT }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add server to known_hosts
+        run: ssh-keyscan -H ${{ secrets.PROD_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Backup (pre-deploy)
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.PROD_HOST }} \
+            "~/scripts/backup-service.sh $SERVICE prod"
+
+      - name: Rsync código
+        run: |
+          rsync -avz --delete \
+            --exclude='.git/' --exclude='node_modules/' --exclude='.next/' \
+            --exclude='dist/' --exclude='__pycache__/' --exclude='.venv/' \
+            --exclude='*.pyc' --exclude='.hf_cache/' --exclude='*.log' \
+            --exclude='.env' --exclude='.env.local' \
+            ./ ${{ secrets.SSH_USER }}@${{ secrets.PROD_HOST }}:/home/${{ secrets.SSH_USER }}/projects/$SERVICE/
+
+      - name: Deploy en servidor
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.PROD_HOST }} \
+            "~/scripts/ci-deploy.sh $SERVICE prod"
+
+      - name: Healthcheck
+        run: |
+          sleep 15
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.PROD_HOST }} \
+            "curl -sf http://localhost:$PORT$HEALTH && echo 'OK'"
